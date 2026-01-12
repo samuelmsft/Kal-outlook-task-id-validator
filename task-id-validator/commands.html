@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <title>Task ID Validator Commands</title>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <script type="text/javascript">
+        Office.onReady(function() {
+            // Add-in is ready
+        });
+
+        function validateSubject(event) {
+            // Get the subject of the email
+            Office.context.mailbox.item.subject.getAsync(function(result) {
+                if (result.status === Office.AsyncResultStatus.Succeeded) {
+                    var subject = result.value;
+                    
+                    // Check if subject matches pattern [number - text]
+                    // Pattern: starts with [, followed by digits, space, dash, space, text, and ]
+                    var pattern = /^\[\d+\s*-\s*.+\]/;
+                    
+                    if (!pattern.test(subject)) {
+                        // Subject doesn't match - show error and prevent sending
+                        var message = {
+                            type: Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage,
+                            message: "Missing Task ID! Please add task ID in format: [1234 - Project Name]"
+                        };
+                        
+                        Office.context.mailbox.item.notificationMessages.addAsync("taskIdWarning", message);
+                        
+                        // Prevent the email from being sent
+                        event.completed({ allowEvent: false });
+                    } else {
+                        // Subject is valid - allow sending
+                        event.completed({ allowEvent: true });
+                    }
+                } else {
+                    // If we can't read the subject, allow sending (fail open)
+                    event.completed({ allowEvent: true });
+                }
+            });
+        }
+
+        // Register the function
+        Office.actions.associate("validateSubject", validateSubject);
+    </script>
+</head>
+<body>
+</body>
+</html>

@@ -14,11 +14,15 @@
             // Get the subject of the email
             Office.context.mailbox.item.subject.getAsync(function(result) {
                 if (result.status === Office.AsyncResultStatus.Succeeded) {
-                    var subject = result.value;
+                    var subject = result.value || "";
+                    
+                    // Trim whitespace
+                    subject = subject.trim();
                     
                     // Check if subject matches pattern [number - text]
-                    // Pattern: starts with [, followed by digits, space, dash, space, text, and ]
-                    var pattern = /^\[\d+\s*-\s*.+\]/;
+                    // Pattern: starts with [, followed by digits, optional spaces, dash, optional spaces, at least one char, and ]
+                    // Examples: [1234 - Test], [2532-FDA], [789 - IT]
+                    var pattern = /^\[\d+\s*-\s*[^\]]+\]/;
                     
                     if (!pattern.test(subject)) {
                         // Subject doesn't match - show error and prevent sending
@@ -32,6 +36,9 @@
                         // Prevent the email from being sent
                         event.completed({ allowEvent: false });
                     } else {
+                        // Clear any previous error messages
+                        Office.context.mailbox.item.notificationMessages.removeAsync("taskIdWarning");
+                        
                         // Subject is valid - allow sending
                         event.completed({ allowEvent: true });
                     }

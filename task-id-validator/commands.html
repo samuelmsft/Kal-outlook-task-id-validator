@@ -7,42 +7,64 @@
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <script type="text/javascript">
         Office.onReady(function() {
-            // Add-in is ready
+            console.log("Task ID Validator: Add-in loaded successfully");
         });
 
         function validateSubject(event) {
+            console.log("=== Task ID Validator: Send event triggered ===");
+            
             // Get the subject of the email
             Office.context.mailbox.item.subject.getAsync(function(result) {
+                console.log("Subject getAsync result status:", result.status);
+                
                 if (result.status === Office.AsyncResultStatus.Succeeded) {
                     var subject = result.value || "";
+                    console.log("Original subject:", JSON.stringify(subject));
                     
                     // Trim whitespace
                     subject = subject.trim();
+                    console.log("Trimmed subject:", JSON.stringify(subject));
                     
                     // Check if subject matches pattern [number - text]
                     // Pattern: starts with [, followed by digits, optional spaces, dash, optional spaces, at least one char, and ]
                     // Examples: [1234 - Test], [2532-FDA], [789 - IT]
                     var pattern = /^\[\d+\s*-\s*[^\]]+\]/;
+                    console.log("Testing pattern:", pattern);
                     
-                    if (!pattern.test(subject)) {
+                    var isValid = pattern.test(subject);
+                    console.log("Pattern match result:", isValid);
+                    
+                    if (!isValid) {
+                        console.log("BLOCKING: Subject does not match required pattern");
+                        
                         // Subject doesn't match - show error and prevent sending
                         var message = {
                             type: Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage,
                             message: "Missing Task ID! Please add task ID in format: [1234 - Project Name]"
                         };
                         
-                        Office.context.mailbox.item.notificationMessages.addAsync("taskIdWarning", message);
+                        Office.context.mailbox.item.notificationMessages.addAsync("taskIdWarning", message, function(asyncResult) {
+                            console.log("Error message displayed, status:", asyncResult.status);
+                        });
                         
                         // Prevent the email from being sent
+                        console.log("Calling event.completed with allowEvent: false");
                         event.completed({ allowEvent: false });
                     } else {
+                        console.log("ALLOWING: Subject matches required pattern");
+                        
                         // Clear any previous error messages
-                        Office.context.mailbox.item.notificationMessages.removeAsync("taskIdWarning");
+                        Office.context.mailbox.item.notificationMessages.removeAsync("taskIdWarning", function(asyncResult) {
+                            console.log("Error message cleared, status:", asyncResult.status);
+                        });
                         
                         // Subject is valid - allow sending
+                        console.log("Calling event.completed with allowEvent: true");
                         event.completed({ allowEvent: true });
                     }
                 } else {
+                    console.log("ERROR: Could not read subject, failing open");
+                    console.log("Error details:", result.error);
                     // If we can't read the subject, allow sending (fail open)
                     event.completed({ allowEvent: true });
                 }

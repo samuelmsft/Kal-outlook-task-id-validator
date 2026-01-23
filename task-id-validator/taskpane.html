@@ -49,20 +49,40 @@
             <strong>Active:</strong> This add-in will check your email subjects before sending.
         </div>
         
-        <h3>Required Format:</h3>
+        <h3>Accepted Task ID Formats:</h3>
+        
+        <h4>Wrike Tasks:</h4>
         <div class="example">
-            [Task_ID - Project_Name] Email subject
+            WRIKE-123 or [WRIKE-456]
+        </div>
+        
+        <h4>Work Item IDs:</h4>
+        <div class="example">
+            WID-789
+        </div>
+        
+        <h4>Task Numbers:</h4>
+        <div class="example">
+            Task #123 or Task#456
+        </div>
+        
+        <h4>Project Codes:</h4>
+        <div class="example">
+            [FDA-123] or ABC-456 or [IT-789]
         </div>
         
         <h3>Valid Examples:</h3>
         <ul>
-            <li><code>[2532 - FDA] Create service account</code></li>
-            <li><code>[1045 - Marketing] Q4 campaign review</code></li>
-            <li><code>[789 - IT] Server maintenance window</code></li>
+            <li><code>[WRIKE-2532] Create service account</code></li>
+            <li><code>WID-1045 Q4 campaign review</code></li>
+            <li><code>Task #789 Server maintenance window</code></li>
+            <li><code>[FDA-123] Budget approval needed</code></li>
         </ul>
         
         <h3>How it works:</h3>
-        <p>When you click Send, the add-in automatically checks if your subject line includes a task ID in the correct format. If it's missing, you'll see a warning and the email won't be sent until you add it.</p>
+        <p>When you click Send, the add-in automatically checks if your subject line includes a task ID. If it's missing, you'll see a <strong>warning message</strong>.</p>
+        
+        <p><strong>Need to send without a Task ID?</strong> Simply click Send again after seeing the warning, and the email will be sent.</p>
         
         <p style="color: #605e5c; font-size: 12px; margin-top: 30px;">
             Need help? Contact your IT department.

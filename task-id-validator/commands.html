@@ -25,38 +25,86 @@
                     subject = subject.trim();
                     console.log("Trimmed subject:", JSON.stringify(subject));
                     
-                    // Check if subject matches pattern [number - text]
-                    // Pattern: starts with [, followed by digits, optional spaces, dash, optional spaces, at least one char, and ]
-                    // Examples: [1234 - Test], [2532-FDA], [789 - IT]
-                    var pattern = /^\[\d+\s*-\s*[^\]]+\]/;
-                    console.log("Testing pattern:", pattern);
+                    // Multiple patterns to check
+                    var patterns = [
+                        /\[?WRIKE-\d+\]?/i,           // WRIKE-123 or [WRIKE-123]
+                        /WID-\d+/i,                   // WID-123
+                        /Task\s*#\d+/i,               // Task #123 or Task#123
+                        /\[?[A-Z]+-\d+\]?/i           // [ABC-123] or ABC-123
+                    ];
                     
-                    var isValid = pattern.test(subject);
-                    console.log("Pattern match result:", isValid);
+                    console.log("Testing against patterns:", patterns);
+                    
+                    // Check if subject matches any pattern
+                    var isValid = patterns.some(function(pattern) {
+                        var match = pattern.test(subject);
+                        console.log("Pattern", pattern, "matched:", match);
+                        return match;
+                    });
+                    
+                    console.log("Overall validation result:", isValid);
                     
                     if (!isValid) {
-                        console.log("BLOCKING: Subject does not match required pattern");
+                        console.log("WARNING: Subject does not match any required pattern");
                         
-                        // Subject doesn't match - show error and prevent sending
+                        // Show informational message (not error) that allows sending
                         var message = {
-                            type: Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage,
-                            message: "Missing Task ID! Please add task ID in format: [1234 - Project Name]"
+                            type: Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage,
+                            message: "⚠️ No Task ID detected. Format examples: [WRIKE-123], WID-456, Task #789, [FDA-123]. Click Send again to proceed anyway.",
+                            icon: "Icon.80x80",
+                            persistent: false
                         };
                         
                         Office.context.mailbox.item.notificationMessages.addAsync("taskIdWarning", message, function(asyncResult) {
-                            console.log("Error message displayed, status:", asyncResult.status);
+                            console.log("Warning message displayed, status:", asyncResult.status);
                         });
                         
-                        // Prevent the email from being sent
-                        console.log("Calling event.completed with allowEvent: false");
-                        event.completed({ allowEvent: false });
+                        // Check if this is a retry (user clicked Send again after seeing warning)
+                        // We'll store a flag in sessionStorage to track this
+                        try {
+                            var retryKey = "taskIdValidator_retry_" + Date.now();
+                            var lastRetry = sessionStorage.getItem("taskIdValidator_lastRetry");
+                            var now = Date.now();
+                            
+                            console.log("Last retry timestamp:", lastRetry);
+                            console.log("Current timestamp:", now);
+                            
+                            // If they tried to send within the last 5 seconds, allow it (they're retrying)
+                            if (lastRetry && (now - parseInt(lastRetry)) < 5000) {
+                                console.log("ALLOWING: User is retrying within 5 seconds");
+                                sessionStorage.removeItem("taskIdValidator_lastRetry");
+                                
+                                // Clear the warning message
+                                Office.context.mailbox.item.notificationMessages.removeAsync("taskIdWarning");
+                                
+                                event.completed({ allowEvent: true });
+                            } else {
+                                console.log("BLOCKING: First attempt, storing retry timestamp");
+                                // Store the retry timestamp
+                                sessionStorage.setItem("taskIdValidator_lastRetry", now.toString());
+                                
+                                // Block this attempt but they can retry
+                                event.completed({ allowEvent: false });
+                            }
+                        } catch (e) {
+                            console.log("SessionStorage not available, using fallback");
+                            // Fallback: just show warning and block once
+                            event.completed({ allowEvent: false });
+                        }
                     } else {
                         console.log("ALLOWING: Subject matches required pattern");
                         
-                        // Clear any previous error messages
+                        // Clear any previous warning messages
                         Office.context.mailbox.item.notificationMessages.removeAsync("taskIdWarning", function(asyncResult) {
-                            console.log("Error message cleared, status:", asyncResult.status);
+                            console.log("Warning message cleared, status:", asyncResult.status);
                         });
+                        
+                        // Clear retry flag
+                        try {
+                            sessionStorage.removeItem("taskIdValidator_lastRetry");
+                        } catch (e) {
+                            console.log("Could not clear sessionStorage");
+                        }
                         
                         // Subject is valid - allow sending
                         console.log("Calling event.completed with allowEvent: true");

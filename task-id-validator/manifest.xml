@@ -6,10 +6,10 @@
            xsi:type="MailApp">
   
   <Id>eeead739-4b57-4b77-95cd-796e778c4b21</Id>
-  <Version>1.0.1.11</Version>
-  <ProviderName>Samuel Test tenant</ProviderName>
+  <Version>1.0</Version>
+  <ProviderName>Kalexius</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Task ID Validator NEW"/>
+  <DisplayName DefaultValue="Task ID Validator"/>
   <Description DefaultValue="Validates task ID in email subject before sending"/>
   <IconUrl DefaultValue="https://samuelmsft.github.io/Kal-outlook-task-id-validator/task-id-validator/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="https://samuelmsft.github.io/Kal-outlook-task-id-validator/task-id-validator/icon-128.png"/>

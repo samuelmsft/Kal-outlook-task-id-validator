@@ -6,11 +6,11 @@
            xsi:type="MailApp">
   
   <Id>eeead739-4b57-4b77-95cd-796e778c4b21</Id>
-  <Version>1.0.2.0</Version>
-  <ProviderName>Samuel test tenant</ProviderName>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Kalexius</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Task ID Validator"/>
-  <Description DefaultValue="Validates task ID in email subject before sending"/>
+  <DisplayName DefaultValue="Wrike ID Validator"/>
+  <Description DefaultValue="Validates Wrike ID in email subject before sending"/>
   <IconUrl DefaultValue="https://samuelmsft.github.io/outlook-task-id-validator/task-id-validator/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="https://samuelmsft.github.io/outlook-task-id-validator/task-id-validator/icon-128.png"/>
   <SupportUrl DefaultValue="https://your-company.com/support"/>
@@ -79,10 +79,10 @@
           <bt:Url id="Taskpane.Url" DefaultValue="https://samuelmsft.github.io/outlook-task-id-validator/task-id-validator/taskpane.html"/>
         </bt:Urls>
         <bt:ShortStrings>
-          <bt:String id="GroupLabel" DefaultValue="Task ID Validator"/>
+          <bt:String id="GroupLabel" DefaultValue="Wrike ID Validator"/>
         </bt:ShortStrings>
         <bt:LongStrings>
-          <bt:String id="Description" DefaultValue="Validates task ID in subject"/>
+          <bt:String id="Description" DefaultValue="Validates Wrike ID in subject"/>
         </bt:LongStrings>
       </Resources>
       

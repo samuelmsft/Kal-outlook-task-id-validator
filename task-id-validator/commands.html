@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <title>Task ID Validator Commands</title>
+    <title>Wrike ID Validator Commands</title>
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <script type="text/javascript">
         Office.onReady(function() {
@@ -11,7 +11,7 @@
         });
 
         function validateSubject(event) {
-            console.log("=== Task ID Validator: Send event triggered ===");
+            console.log("=== Wrike ID Validator: Send event triggered ===");
             
             // Get the subject of the email
             Office.context.mailbox.item.subject.getAsync(function(result) {
@@ -27,10 +27,11 @@
                     
                     // Multiple patterns to check
                     var patterns = [
-                        /\[?WRIKE-\d+\]?/i,           // WRIKE-123 or [WRIKE-123]
-                        /WID-\d+/i,                   // WID-123
-                        /Task\s*#\d+/i,               // Task #123 or Task#123
-                        /\[?[A-Z]+-\d+\]?/i           // [ABC-123] or ABC-123
+                        // /\[?WRIKE-\d+\]?/i,           // WRIKE-123 or [WRIKE-123]
+                        // /WID-\d+/i,                   // WID-123
+                        // /Task\s*#\d+/i,               // Task #123 or Task#123
+                        // /\[?[A-Z]+-\d+\]?/i           // [ABC-123] or ABC-123
+                        /\[\d+\]/                     // [123] - number in brackets
                     ];
                     
                     console.log("Testing against patterns:", patterns);
@@ -50,7 +51,7 @@
                         // Show informational message (not error) that allows sending
                         var message = {
                             type: Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage,
-                            message: "⚠️ No Task ID detected. Format examples: [WRIKE-123], WID-456, Task #789, [FDA-123]. Click Send again to proceed anyway.",
+                            message: "⚠️ No Wrike ID detected. Format example: [123]. Click Send again to proceed anyway.",
                             icon: "Icon.80x80",
                             persistent: false
                         };

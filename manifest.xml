@@ -75,8 +75,8 @@
           <bt:Image id="Icon.80x80" DefaultValue="https://samuelmsft.github.io/outlook-task-id-validator/task-id-validator/icon-80.png"/>
         </bt:Images>
         <bt:Urls>
-          <bt:Url id="Commands.Url" DefaultValue="https://samuelmsft.github.io/outlook-task-id-validator/task-id-validator/commands.html"/>
-          <bt:Url id="Taskpane.Url" DefaultValue="https://samuelmsft.github.io/outlook-task-id-validator/task-id-validator/taskpane.html"/>
+          <bt:Url id="Commands.Url" DefaultValue="https://samuelmsft.github.io/Kal-outlook-task-id-validator/task-id-validator/commands.html"/>
+          <bt:Url id="Taskpane.Url" DefaultValue="https://samuelmsft.github.io/Kal-outlook-task-id-validator/task-id-validator/taskpane.html"/>
         </bt:Urls>
         <bt:ShortStrings>
           <bt:String id="GroupLabel" DefaultValue="Wrike ID Validator"/>
